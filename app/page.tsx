@@ -18,6 +18,20 @@ export default function Home() {
     // Only run client-side
     if (typeof window === 'undefined') return
 
+    // Handle OAuth callback code if it ends up on the home page
+    const handleOAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const code = urlParams.get('code')
+      
+      if (code) {
+        // Redirect to the proper callback route
+        // Use current origin to maintain the same domain
+        window.location.href = `${window.location.origin}/auth/callback?code=${code}`
+        return true
+      }
+      return false
+    }
+
     const checkUser = async () => {
       const supabase = createClient()
       const {
@@ -37,7 +51,13 @@ export default function Home() {
       setLoading(false)
     }
 
-    checkUser()
+    // Check for OAuth code first
+    handleOAuthCallback().then(() => {
+      // Only check user if no OAuth code was found
+      if (!new URLSearchParams(window.location.search).get('code')) {
+        checkUser()
+      }
+    })
 
     const supabase = createClient()
     const {
