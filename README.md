@@ -92,6 +92,7 @@ Create a `.env.local` file in the root directory:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SITE_URL=https://your-production-domain.com
 ```
 
 **Example:**
@@ -99,7 +100,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
 ```
+
+**Note:** `NEXT_PUBLIC_SITE_URL` is optional but recommended for production. It ensures OAuth redirects work correctly. If not set, the app will try to detect the URL from request headers.
 
 ### 5. Set Up Database Schema
 
@@ -241,6 +245,7 @@ fe-stage4a/
 3. Add environment variables:
     - `NEXT_PUBLIC_SUPABASE_URL`
     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+    - `NEXT_PUBLIC_SITE_URL` (set to your Vercel deployment URL, e.g., `https://your-app.vercel.app`)
 4. Deploy!
 
 ### Netlify
@@ -253,9 +258,25 @@ fe-stage4a/
 
 ### Important for Production
 
--   Update your Supabase redirect URLs to include your production domain
--   Ensure Realtime is enabled in your Supabase project
--   Test Google OAuth with production URLs if enabled
+-   **Set Environment Variables:**
+    - Add `NEXT_PUBLIC_SITE_URL` to your deployment platform's environment variables
+    - Set it to your production domain (e.g., `https://your-app.vercel.app`)
+    - This ensures OAuth redirects work correctly after login
+
+-   **Update Supabase Redirect URLs:**
+    - Go to Supabase Dashboard → Authentication → URL Configuration
+    - Add your production domain to "Redirect URLs"
+    - Add: `https://your-production-domain.com/auth/callback`
+    - For Google OAuth, also add it in Google Cloud Console
+
+-   **Verify Realtime:**
+    - Ensure Realtime is enabled in your Supabase project
+    - Test that objects sync in real-time across multiple browser tabs
+
+-   **Test Authentication:**
+    - Test email/password login
+    - Test Google OAuth (if enabled)
+    - Verify redirects go to production URL, not localhost
 
 ## 🐛 Troubleshooting
 
